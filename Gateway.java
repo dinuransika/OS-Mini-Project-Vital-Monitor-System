@@ -4,7 +4,7 @@ import java.net.SocketException;
 import java.util.concurrent.TimeUnit;
 
 // Implement a gateway that discovers all of these vital monitors.
-public class Gateway extends Thread {
+public class Gateway extends Thread{
     private DatagramSocket createRecieveSocket(){
         DatagramSocket socket = null;
         try {
@@ -23,15 +23,14 @@ public class Gateway extends Thread {
         }
         return packet;
     }
-    // recieve packet in threads
-    public void run(){
-        DatagramSocket socket = createRecieveSocket();
-        DatagramPacket packet = recievePacket();
+
+    private void Run(Gateway gateway){
+        DatagramSocket recieveSocket = gateway.createRecieveSocket();
+        DatagramPacket recievePacket = gateway.recievePacket();
         while(true){
             try {
-                socket.receive(packet);
-                String message = new String(packet.getData(), 0, packet.getLength());
-                System.out.println(message);
+                recieveSocket.receive(recievePacket);
+                System.out.println("Received packet from: " + recievePacket.getAddress().getHostAddress() + ":" + recievePacket.getPort());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -39,6 +38,7 @@ public class Gateway extends Thread {
     }
 
     public static void main(String[] args) {
-        
+        Gateway gateway = new Gateway();
+        gateway.Run(gateway);
     }
 }
