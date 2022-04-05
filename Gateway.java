@@ -1,5 +1,8 @@
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +33,17 @@ public class Gateway extends Thread{
         while(true){
             try {
                 recieveSocket.receive(recievePacket);
-                System.out.println("Received packet from: " + recievePacket.getAddress().getHostAddress() + ":" + recievePacket.getPort());
+                ByteArrayInputStream bis = new ByteArrayInputStream(recievePacket.getData());
+                ObjectInputStream ois = new ObjectInputStream(bis);
+                Monitor monitor = (Monitor) ois.readObject();
+                Socket client = new Socket(monitor.getIp(), monitor.getPort());
+                // System.out.println("Monitor: " + monitor.monitor_str());
+                // Recieve Message
+                byte[] buffer = new byte[1024];
+                client.getInputStream().read(buffer);
+                String message = new String(buffer);
+                System.out.println("Message: " + message);
+                client.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
