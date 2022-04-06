@@ -4,7 +4,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.concurrent.TimeUnit;
 
 // Implement a gateway that discovers all of these vital monitors.
 public class Gateway extends Thread{
