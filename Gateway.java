@@ -35,7 +35,7 @@ public class Gateway extends Thread{
         }
         return packet;
     }
-    // Use the run mehtod to recieve the vital monitor packets
+    // Use the run mehtod to recieve the vital monitor packets concurrently
     private void Run(Gateway gateway){
         DatagramSocket recieveSocket = gateway.createRecieveSocket();
         DatagramPacket recievePacket = gateway.recievePacket();
@@ -51,7 +51,7 @@ public class Gateway extends Thread{
                 byte[] buffer = new byte[1024];
                 client.getInputStream().read(buffer);
                 String message = new String(buffer);
-                System.out.println("Message: " + message);
+                System.out.println("Message: " + message); // Printing the message from the vital monitor
                 client.close();
             } catch (Exception e) {
                 e.printStackTrace();
