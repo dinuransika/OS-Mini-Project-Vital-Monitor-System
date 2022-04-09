@@ -1,3 +1,4 @@
+# Kill script for ports
 for i in $(seq 5)
 do
     j=$((i + 5000));

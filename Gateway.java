@@ -1,3 +1,10 @@
+//////////////////////////////////////////////////////////////////////////////
+// Program: Gateway for vital monitors
+// Author:  Dissanayake D.M.D.R.
+// E Number: E/17/072
+// Date:    07.04.2022
+//////////////////////////////////////////////////////////////////////////////
+
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
@@ -6,7 +13,9 @@ import java.net.Socket;
 import java.net.SocketException;
 
 // Implement a gateway that discovers all of these vital monitors.
+// Gateway class extends Thread class. 
 public class Gateway extends Thread{
+    // Creating the data gram socket for packet recieving on port 6000
     private DatagramSocket createRecieveSocket(){
         DatagramSocket socket = null;
         try {
@@ -16,6 +25,7 @@ public class Gateway extends Thread{
         }
         return socket;
     }
+    // Recieve datagram packets from the vital monitor
     private DatagramPacket recievePacket(){
         DatagramPacket packet = null;
         try {
@@ -25,23 +35,23 @@ public class Gateway extends Thread{
         }
         return packet;
     }
-
+    // Use the run mehtod to recieve the vital monitor packets concurrently
     private void Run(Gateway gateway){
         DatagramSocket recieveSocket = gateway.createRecieveSocket();
         DatagramPacket recievePacket = gateway.recievePacket();
+        // Recieve the vital monitor packets
         while(true){
             try {
                 recieveSocket.receive(recievePacket);
-                ByteArrayInputStream bis = new ByteArrayInputStream(recievePacket.getData());
-                ObjectInputStream ois = new ObjectInputStream(bis);
-                Monitor monitor = (Monitor) ois.readObject();
+                ByteArrayInputStream bis = new ByteArrayInputStream(recievePacket.getData()); // Get the monitor object from the packet as a Byte array input stream
+                ObjectInputStream ois = new ObjectInputStream(bis); // Convert the Byte array input stream to an object input stream
+                Monitor monitor = (Monitor) ois.readObject(); // Convert the object input stream to a monitor object
+                // Create a TCP connection and recieve the message from the vital monitor.
                 Socket client = new Socket(monitor.getIp(), monitor.getPort());
-                // System.out.println("Monitor: " + monitor.monitor_str());
-                // Recieve Message
                 byte[] buffer = new byte[1024];
                 client.getInputStream().read(buffer);
                 String message = new String(buffer);
-                System.out.println("Message: " + message);
+                System.out.println("Message: " + message); // Printing the message from the vital monitor
                 client.close();
             } catch (Exception e) {
                 e.printStackTrace();
